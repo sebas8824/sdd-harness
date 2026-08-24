@@ -40,8 +40,8 @@ flowchart TD
     claude --> agents
     docs --> tasks
     skills --> roles
-    hooks -.governs.-> agents
-    hooks -.governs.-> skills
+    hooks -. governs .-> agents
+    hooks -. governs .-> skills
 ```
 
 The rule that keeps it cheap: **`AGENTS.md` holds only what no gate can catch** — rules whose failure

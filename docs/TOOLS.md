@@ -8,15 +8,15 @@ breaks without it.
 flowchart LR
     agent["Coding agent<br/>(Claude Code · Codex · OpenCode · Qwen · Gemini CLI)"]
     skills["Agent Skills<br/>SDD lifecycle + craft"]
-    graph["code-review-graph<br/>MCP knowledge graph"]
+    kgraph["code-review-graph<br/>MCP knowledge graph"]
     rtk["rtk<br/>CLI output compressor"]
     mcp["Other MCP servers<br/>docs · design · workspace"]
     gates["Git hooks + CI gates"]
 
     agent --> skills
-    agent --> graph
+    agent --> kgraph
     agent --> mcp
-    agent -.commands rewritten by.-> rtk
+    agent -. commands rewritten by .-> rtk
     agent --> gates
 ```
 
