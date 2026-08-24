@@ -127,6 +127,12 @@ fail, restore it.
 
 ---
 
+## Author
+
+**Sebastián Benítez** ([@sebas8824](https://github.com/sebas8824)) — author and maintainer.
+
+Built from a real multi-service codebase, then stripped of everything specific to it.
+
 ## Credits
 
 The SDD lifecycle commands and the general engineering craft skills come from
