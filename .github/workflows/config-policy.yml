@@ -7,7 +7,7 @@ name: config-policy
 #     trees, so two agents cannot enforce two versions of the same rule.
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
     # `edited` fires when the PR title or body changes. Without it, a PR that supplies its
     # ADR-NNNN reference in the body — which the sensitive-paths gate accepts — stays red
     # until an unrelated push, because the default types are opened/synchronize/reopened.

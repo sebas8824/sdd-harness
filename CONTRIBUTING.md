@@ -13,7 +13,7 @@ first occurrence is a guess, and guesses are what make an instruction file too e
 
 ## Working here
 
-- Branch as `feature/NNN-name`; never push to `main` directly.
+- Branch as `feature/NNN-name`; never push to `master` directly.
 - Enable the local gate once per clone: `git config core.hooksPath .githooks`.
 - A change to a path in [`docs/architecture/adr/SENSITIVE-PATHS.md`](docs/architecture/adr/SENSITIVE-PATHS.md)
   carries an `ADR-NNNN` reference **in the commit message**.
