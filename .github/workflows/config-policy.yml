@@ -1,0 +1,49 @@
+name: config-policy
+
+# Repository-policy gates, both cheap enough to run on every PR:
+#   - sensitive-paths: a change to a path listed in docs/architecture/adr/SENSITIVE-PATHS.md
+#     carries an ADR-NNNN reference.
+#   - skills sync: the project-owned agent skills and the reviewer roster agree across agent
+#     trees, so two agents cannot enforce two versions of the same rule.
+on:
+  pull_request:
+    branches: [master]
+    # `edited` fires when the PR title or body changes. Without it, a PR that supplies its
+    # ADR-NNNN reference in the body — which the sensitive-paths gate accepts — stays red
+    # until an unrelated push, because the default types are opened/synchronize/reopened.
+    types: [opened, synchronize, reopened, edited]
+
+jobs:
+  sensitive-paths:
+    name: Sensitive-paths ADR gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require an ADR reference for sensitive-path changes
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin "$BASE_REF"
+          {
+            git log --format=%B "origin/$BASE_REF..HEAD"
+            printf '%s\n%s\n' "$PR_TITLE" "$PR_BODY"
+          } > .adr-refs.txt
+          git diff --name-only "origin/$BASE_REF...HEAD" \
+            | python3 .githooks/sensitive-paths-check.py --message-file .adr-refs.txt
+
+  skills-sync:
+    name: Agent skills and roster in sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Require project-owned skills and the reviewer roster to agree
+        run: python3 .githooks/skills-sync-check.py

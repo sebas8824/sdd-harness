@@ -1,0 +1,7 @@
+#!/bin/sh
+# Sensitive-paths gate (local). Fails the commit when a staged file matches a path listed in
+# docs/architecture/adr/SENSITIVE-PATHS.md and the message carries no ADR-NNNN reference.
+# Enable once per clone:  git config core.hooksPath .githooks
+hook_dir=$(dirname "$0")
+git diff --cached --name-only --diff-filter=ACMR \
+    | python3 "$hook_dir/sensitive-paths-check.py" --message-file "$1" || exit 1

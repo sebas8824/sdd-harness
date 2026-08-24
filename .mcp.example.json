@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "code-review-graph": {
+      "command": "uvx",
+      "args": ["--with", "sentence-transformers", "code-review-graph@2.3.7", "serve"],
+      "cwd": "/absolute/path/to/your/repo",
+      "type": "stdio"
+    }
+  }
+}

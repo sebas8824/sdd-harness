@@ -1,0 +1,75 @@
+{
+  "_comment": "Copy to .claude/settings.json and replace every /absolute/path/to/your/repo. Permissions are the read-only and routine-write commands an agent runs constantly; a push always asks.",
+  "permissions": {
+    "allow": [
+      "Edit",
+      "Write",
+      "Read",
+      "Glob",
+      "Grep",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git switch:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git restore:*)",
+      "Bash(git stash:*)",
+      "Bash(git worktree:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(cat:*)",
+      "Bash(wc:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(jq:*)",
+      "Bash(python3:*)"
+    ],
+    "ask": ["Bash(git push:*)"]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "_comment": "Refresh the knowledge graph once per session and print its stats, so the agent starts with a current index.",
+            "type": "command",
+            "command": "git rev-parse --git-dir >/dev/null 2>&1 && { code-review-graph update --repo \"/absolute/path/to/your/repo\" >/dev/null 2>&1; code-review-graph status --repo \"/absolute/path/to/your/repo\"; } || echo 'Not a git repo, skipping'",
+            "timeout": 60
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "_comment": "Incremental re-index after every edit; --skip-flows keeps it fast enough to run inline.",
+            "type": "command",
+            "command": "git rev-parse --git-dir >/dev/null 2>&1 && code-review-graph update --skip-flows --repo \"/absolute/path/to/your/repo\" >/dev/null 2>&1 || true",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "_comment": "A policy reminder costs nothing when it lives in a hook instead of the always-loaded instruction file.",
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"UserPromptSubmit\",\"additionalContext\":\"Codebase exploration: query the code-review-graph MCP tools BEFORE Grep/Glob/Read - semantic_search_nodes to find code, query_graph for callers/callees/imports_of/tests_for, get_impact_radius for blast radius, detect_changes plus get_review_context for review. Fall back to file scanning only when the graph does not cover what you need. Reading a known specific file path, a non-code file, or command output does not require a graph query first.\"},\"suppressOutput\":true}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
